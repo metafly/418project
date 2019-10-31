@@ -12,6 +12,7 @@ Whenever you commit to this repository, GitHub Pages will run [Jekyll](https://j
 ### URL
 
 ### SUMMARY
+We plan on taking a previous 15-418 project, 418CacheSim, and modifying it by adding support for NUMA and mixed architectures. Our goal is to study the performance of different cache coherence protocols on different Memory Access layouts. 
 
 ### BACKGROUND
 
