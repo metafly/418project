@@ -1,28 +1,62 @@
-## 15-418 FINAL PROJECT: 
-### SOMETHING SOMETHING SOMETHING
-
-You can use the [editor on GitHub](https://github.com/metafly/418project/edit/master/index.md) to maintain and preview the content for your website in Markdown files.
-
-Whenever you commit to this repository, GitHub Pages will run [Jekyll](https://jekyllrb.com/) to rebuild the pages in your site, from the content in your Markdown files.
+## 15-418 FINAL PROJECT: CacheM ALL Sim
+### Cache Memory Acess Load latency Simulator
 
 # Project Proposal
 
-## Title
-
-### URL
-
 ### Summary
-We plan on taking a previous 15-418 project, 418CacheSim, and modifying it by adding support for NUMA and mixed architectures. Our goal is to study the performance of different cache coherence protocols on different Memory Access layouts. 
+We plan on taking a previous 15-418 project, 418CacheSim, and modifying it by adding support for NUMA and mixed architectures. Our goal is to study the performance of different cache coherence protocols on different Memory Access layouts.  
+
 
 ### Background
+In computer architecture, cache coherence is the uniformity of shared resource data that ends up stored in the multiple local caches. These caches can be connected to memory in various ways:
+
+**1) Uniform Memory Access (UMA)**
+In this form of connection, each processor in the model shares the physical memory uniformly. Hence access time to a memory location is independent of which processor makes a request
+
+**2) Non-Uniform Memory Access (NUMA)**
+In this form of connection, each processor’s access time depends on the memory’s location relative to the processor. Under this, a processor can access local memory faster than non-local memory. 
+
+**3) NUMA and UMA structures** are often combined to make scalable architectures. In this, processors in a Node have uniform access time to their local memory and have non-uniform access time to memories outside of their node depending on the distance.  
+We are trying to create a comparative study of cache coherence in different memory access layouts of nodes.  
+
 
 ### The Challenge
+This project will have several challenges for us: 
+
+**1)** We need to understand how the 418CacheSim Repository works, and see whether we can just build a different memory access layout on that, or will we have to redefine how the simulator addresses various aspects of cache coherence. 
+
+**2)** We believe that timing is an important factor for cache coherence across NUMA. So, an important part of the project will be to decide a method to be able to calculate clock ticks. Or some other similar metric to calculate time. For example, measuring how much time does it take to service a request internally vs externally. 
+
+Deciding on what other metrics that should be compared across these architectures. 
+
 
 ### Resources
+We will be building off of a previous 15-418 project:
+418CacheSim: https://kshitizdange.github.io/418CacheSim/proposal-page
+
+The project provides a code base for snooping-based cache coherence protocols on basic UMA architecture. 
+
+Since we will be running the simulations with traces, we will not need any additional machines.
+
 
 ### Goals and Deliverables
+Goals: 
+- Implement memory access models drawn in the background section: NUMA, and UMA+NUMA
+- Add support for  full bit vector directory-based cache coherence
+- Take Memory Traces and run them with our simulator to generate statistics like avg service request time, internal service request time vs external request time, number of cache to cache transfers, number of snooping bus transactions for each bus, etc. 
+
+Performance:
+- A number of bus transactions, per bus. 
+- Graphs comparing actual performance with theoretical performance.
+- Avg. memory request serving time
+- Memory contention 
+
+Extra stuff if we have time: 
+- Add different sparse directory-based protocols to the simulator
+- Find additional metrics to compare things. 
 
 ### Platform Choice
+We will be using C++, since the project we are referring to was in C++. It also works well for reading memory traces and outputting the simulation results. 
 
 ### Schedule
 
@@ -46,12 +80,3 @@ Syntax highlighted code block
 [Link](url) and ![Image](src)
 ```
 
-For more details see [GitHub Flavored Markdown](https://guides.github.com/features/mastering-markdown/).
-
-### Jekyll Themes
-
-Your Pages site will use the layout and styles from the Jekyll theme you have selected in your [repository settings](https://github.com/metafly/418project/settings). The name of this theme is saved in the Jekyll `_config.yml` configuration file.
-
-### Support or Contact
-
-Having trouble with Pages? Check out our [documentation](https://help.github.com/categories/github-pages-basics/) or [contact support](https://github.com/contact) and we’ll help you sort it out.
