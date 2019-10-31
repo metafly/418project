@@ -5,26 +5,26 @@ You can use the [editor on GitHub](https://github.com/metafly/418project/edit/ma
 
 Whenever you commit to this repository, GitHub Pages will run [Jekyll](https://jekyllrb.com/) to rebuild the pages in your site, from the content in your Markdown files.
 
-# PROJECT PROPOSAL
+# Priject Proposal
 
-## TITLE
+## Title
 
 ### URL
 
-### SUMMARY
+### Summary
 We plan on taking a previous 15-418 project, 418CacheSim, and modifying it by adding support for NUMA and mixed architectures. Our goal is to study the performance of different cache coherence protocols on different Memory Access layouts. 
 
-### BACKGROUND
+### Background
 
-### THE CHALLENGE
+### The Challenge
 
-### RESOURCES
+### Resources
 
-### GOALS AND DELIVERABLES
+### Goals and Deliverables
 
-### PLATFORM CHOICE
+### Platform Choice
 
-### SCHEDULE
+### Schedule
 
 Markdown is a lightweight and easy-to-use syntax for styling your writing. It includes conventions for
 
