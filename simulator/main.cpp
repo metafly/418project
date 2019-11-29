@@ -2,6 +2,7 @@
  * The main file for the Cache simulator
  */
 
+#include "UMA.hpp"
 
 #include <iostream>
 #include <fstream>
@@ -21,10 +22,16 @@ void print_usage() {
 
 
 
-int main(int argc char *argv[]) {
+int main(int argc, char *argv[]) {
+    int ch;
     int cores = 1;
     std::string protocol = "MSI";
-    std::string system = "UMA";
+    std::string system = "NUMA";
+
+    if (argc != 7){
+        print_usage();
+        return 1;
+    }
 
     while((ch = getopt(argc, argv, "s:c:p:")) != -1) {
         switch(ch) {
