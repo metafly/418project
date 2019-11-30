@@ -3,6 +3,7 @@
  */
 
 #include "UMA.hpp"
+#include "Bus.hpp"
 
 #include <iostream>
 #include <fstream>

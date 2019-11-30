@@ -8,7 +8,7 @@
 #include <string>
 
 int uma_main(std::string protocol, int cores);
-int uma_init(int cores);
+int uma_init(std::string protocol, int cores);
 int uma_cycle();
 
 

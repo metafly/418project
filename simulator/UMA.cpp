@@ -1,5 +1,6 @@
 
 #include "UMA.hpp"
+#include "Bus.hpp"
 
 #include <iostream>
 #include <vector>
@@ -12,10 +13,14 @@
 
 int uma_main(std::string protocol, int cores) {
     std::cout<<"In UMA main\n";
+    uma_init(protocol, cores);
     return 0;
 }
 
-int uma_init(int cores) {
+int uma_init(std::string protocol, int cores) {
+    /*Initialize:
+     * bus, memory, cache protocol (tracefile???) */
+    Bus::init(cores);
     return 0;
 }
 
