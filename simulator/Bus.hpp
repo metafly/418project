@@ -1,4 +1,4 @@
-#ifndef _BUS_H_H
+#ifndef _BUS_H_
 #define _BUS_H_
 
 #include <pthread.h>
