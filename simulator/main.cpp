@@ -29,10 +29,6 @@ int main(int argc, char *argv[]) {
     std::string protocol = "MSI";
     std::string system = "NUMA";
 
-    if (argc != 7){
-        print_usage();
-        return 1;
-    }
 
     while((ch = getopt(argc, argv, "s:c:p:")) != -1) {
         switch(ch) {

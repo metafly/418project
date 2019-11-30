@@ -2,7 +2,7 @@ CXX=g++
 CXXFLAGS= -std=c++11 -g -pthread
 SRCDIR:= simulator
 
-OBJS = Bus.o UMA.o main.o
+OBJS = Directory.o Bus.o UMA.o main.o
 
 %.o: %.cpp
 	$(CXX) -c $< $(CXXFLAGS)
