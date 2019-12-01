@@ -12,7 +12,7 @@ int Bus::reqresp_count;
 int Bus::owner_id;
 int Bus::cores;
 
-unsigned long Bus::addr;
+MemRequest Bus::request;
 long Bus::acq_time;
 long Bus::act_time; //amount of time bus was active
 int Bus::wait;
@@ -26,7 +26,7 @@ void Bus::init(int num_cores) {
     pthread_cond_init(&reqresp_cvar, NULL);
     reqresp_count = 0;
     owner_id = 0;
-    addr = 0;
+     = 0;
     opt = UNACT;
     cores = num_cores;
     acq_time = -1;
@@ -51,4 +51,8 @@ int Bus::acquire(int id, unsigned long address, operations oper) {
 
     pthread_mutex_unlock(&reqresp_lock);
     return 1;
+}
+
+operations Bus::status() {
+    return opt;
 }

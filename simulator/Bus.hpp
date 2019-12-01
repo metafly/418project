@@ -1,6 +1,6 @@
 #ifndef _BUS_H_
 #define _BUS_H_
-
+#include "Memory.hpp"
 #include <pthread.h>
 #include <vector>
 
@@ -17,7 +17,7 @@ class Bus {
         static pthread_cond_t reqresp_cvar;
         static int reqresp_count;
         static int owner_id;
-        static unsigned long addr;
+        MemRequest request;
         static int cores;
         static long acq_time;
         static long act_time;
@@ -27,6 +27,7 @@ class Bus {
 
         static void init(int num_cores);
         static int acquire(int id, unsigned long address, operations oper);
+        static operations status();
 
 };
 
