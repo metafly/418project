@@ -28,9 +28,10 @@ int main(int argc, char *argv[]) {
     int cores = 1;
     std::string protocol = "MSI";
     std::string system = "NUMA";
+    std::string tracesrc = "trace.txt"
 
 
-    while((ch = getopt(argc, argv, "s:c:p:")) != -1) {
+    while((ch = getopt(argc, argv, "s:c:p:t:")) != -1) {
         switch(ch) {
             case 's':
                 system = std::string(optarg);
@@ -41,6 +42,8 @@ int main(int argc, char *argv[]) {
             case 'p':
                 protocol = std::string(optarg);
                 break;
+            case 't':
+                tracesrc = std::string(optarg);
             default:
                 std::cerr<< "Illegal arguments\n";
                 print_usage();
@@ -49,7 +52,7 @@ int main(int argc, char *argv[]) {
     }
 
     if( cores == 1 || system.compare("UMA") == 0) {
-        uma_main(protocol, cores);
+        uma_main(protocol, cores, tracesrc);
     }
 /*    else if (system.compare("NUMA") == 0) {
         numa_main(protocol, cores);
