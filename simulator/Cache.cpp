@@ -188,6 +188,11 @@ cache_state Cache::cache_check_status(unsigned long addr) {
         }
     }
 
+    if(status == Invalid)
+        Protocol::cache_miss++;
+    else
+        Protocol::cache_hits++;
+
     return status;
 }
 
@@ -199,6 +204,12 @@ void Cache::cache_set_status(unsigned long addr, cache_state status) {
     unsigned long set = (addr & set_mask) >> block_bits;
     unsigned long tag_mask = ~((1 << (set_bits + block_bits)) - 1);
     unsigned long tag = (addr & tag_mask) >> (set_bits + block_bits);
+
+    if(status == Invalid)
+        Protocol::num_invalids++;
+
+    if(status == Modified)
+        Protocol::num_modified++;
 
     Set &s = sets[set];
 

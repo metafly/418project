@@ -97,7 +97,6 @@ void *MSI::request_worker(void *arg) {
         while(!Protocol::ready || Protocol::request_id != obj->id) {
             pthread_cond_wait(&Protocol::worker_cv, &Protocol::lock);
         }
-        std::cout<<"Thread "<<obj->id<< " got request\n";
         op = Protocol::request_op;
         addr = Protocol::request_addr;
 
@@ -109,7 +108,6 @@ void *MSI::request_worker(void *arg) {
          * so that mem access processor can continue processing requests
          */
         handle_request(obj, op, addr);
-        std::cout<<"Thread " << obj->id<<" Done with request\n";
         pthread_mutex_lock(&Protocol::lock);
         fflush(stdout);
         Protocol::trace_count++;

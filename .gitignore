@@ -3,4 +3,4 @@
 *.obj
 *.slo
 *.lo
-simulator/cachemall
+simulator/cache_sim

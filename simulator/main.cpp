@@ -66,7 +66,7 @@ void print_mem_metrics(){
     std::cout << "\nCache Hits = " <<Protocol::cache_hits;
     std::cout << "\nCache Evicts = " <<Protocol::cache_evict;
     std::cout << "\nNumber of Invalidation Requests = " <<Protocol::num_invalids;
-    std::cout << "\nNumber of Modified state = " <<Protocol::num_modified;
+    std::cout << "\nNumber of Modified state = " <<Protocol::num_modified<<"\n";
 
 }
 
