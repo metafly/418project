@@ -4,8 +4,9 @@ CacheM_ALL is a directory-based cache coherence simulator that supports MSI and 
 # Background
 A directory-based cache coherence protocol addresses the cache coherence problem in Distributed Shared Memory or Non-Uniform Memory Access (NUMA) systems. Each core is connected to a directory that keeps track of the state of cache lines in the core's local memory. A significant advantage of a directory-based protocol is the high scalability, as processors only communicate with a few others, instead of making broadcasts across the entire interconnect.
 
-[Proposal](https://github.com/Ridhii/SyncdSim/blob/master/backend/Simulator/FinalProjectProposal.pdf) 
-[Checkpoint](https://github.com/Ridhii/SyncdSim/blob/master/backend/Simulator/CheckpointReport.pdf) 
+[Proposal](https://github.com/metafly/CacheM_ALL/blob/master/project_proposal.pdf) 
+
+[Checkpoint](https://github.com/metafly/CacheM_ALL/blob/master/checkpoint_report.pdf) 
 
 # Project Proposal
 
