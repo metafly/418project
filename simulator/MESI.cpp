@@ -33,7 +33,6 @@ void *MESI::response_worker(void *arg) {
         while(!Bus::pending_work[obj->id]) {
             pthread_cond_wait(&Bus::resp_cvar, &Bus::resp_lock);
         }
-        std::cout<<"Thread "<<obj->id<<" to respond\n";
         pthread_mutex_unlock(&Bus::resp_lock);
 
         pthread_mutex_lock(&obj->lock);
@@ -94,7 +93,6 @@ void *MESI::response_worker(void *arg) {
         if(Bus::resp_count == Protocol::num_cores - 1) {
             pthread_cond_signal(&Bus::req_cvar);
         }
-        std::cout<<"Thread "<<obj->id<<" done responding\n";
     }
 }
 
@@ -111,7 +109,6 @@ void *MESI::request_worker(void *arg) {
         while(!Protocol::ready || Protocol::request_id != obj->id) {
             pthread_cond_wait(&Protocol::worker_cv, &Protocol::lock);
         }
-        std::cout<<"Thread "<<obj->id<< " got request\n";
         op = Protocol::request_op;
         addr = Protocol::request_addr;
 
@@ -123,7 +120,6 @@ void *MESI::request_worker(void *arg) {
          * so that mem access processor can continue processing requests
          */
         handle_request(obj, op, addr);
-        std::cout<<"Thread " << obj->id<<" Done with request\n";
         pthread_mutex_lock(&Protocol::lock);
         fflush(stdout);
         Protocol::trace_count++;
@@ -168,9 +164,7 @@ void MESI::handle_request(MESI *obj, std::string op, unsigned long addr) {
                 assert(op == "W");
                 obj->cache.update_cache_lru(addr);
                 obj->opt = BusRdX;
-                std::cout<<"Before wait\n";
                 Bus::wait_for_responses(obj->id, addr, BusRdX);
-                std::cout<<"After wait\n";
                 if(Bus::recv_nak) {
                     done = false;
                 } else {
@@ -180,9 +174,7 @@ void MESI::handle_request(MESI *obj, std::string op, unsigned long addr) {
             case Invalid:
                 if(op == "R") {
                     obj->opt = BusRd;
-                    std::cout<<"Before wait\n";
                     Bus::wait_for_responses(obj->id, addr, BusRd);
-                    std::cout<<"After wait\n";
                     if(Bus::recv_nak) {
                         done = false;
                     } else {
