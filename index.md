@@ -1,5 +1,3 @@
-## 15-418 FINAL PROJECT: CacheM ALL Sim
-### Cache Memory Acess Load Latency Simulator
 
 # Background
 A directory-based cache coherence protocol addresses the cache coherence problem in Distributed Shared Memory or Non-Uniform Memory Access (NUMA) systems. Each core is connected to a directory that keeps track of the state of cache lines in the core's local memory. A significant advantage of a directory-based protocol is the high scalability, as processors only communicate with a few others, instead of making broadcasts across the entire interconnect.
