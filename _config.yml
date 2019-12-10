@@ -2,7 +2,7 @@ theme: jekyll-theme-cayman
 
 # Setup
 title: CacheM_ALL
-description: A 15-418 final project!
+description: A 15-418 final project on directory-based cache coherence protocols.
 
 author: Shivani Prasad
 author: Claudia Kho
