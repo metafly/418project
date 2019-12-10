@@ -5,6 +5,7 @@
  * Authors :-
  * Kshitiz Dange <kdange@andrew.cmu.edu>
  * Yash Tibrewal <ytibrewa@andrew.cmu.edu>
+ * Shivani Prasad <sprasad1>
  */
 
 #include <iostream>
@@ -19,7 +20,7 @@
 #include "Dragon.h"
 #include "CompSnooping.h"
 #include "Cache.h"
-
+#include "MESIF.h"
 
 pthread_mutex_t Protocol::lock;
 pthread_cond_t Protocol::trace_cv;
@@ -30,6 +31,12 @@ std::string Protocol::request_op;
 unsigned long Protocol::request_addr;
 int Protocol::num_cores;
 std::vector<SnoopingCache *> Protocol::sn_caches;
+
+//Variables needed for MESIF protocol, if a forward state is evicted
+bool Protocol::forward_evicted;
+unsigned long Protocol::f_tag;
+unsigned long Protocol::f_set;
+
 std::atomic<long> Protocol::bus_transactions;
 std::atomic<long> Protocol::mem_reqs;
 std::atomic<long> Protocol::mem_write_backs;
@@ -67,6 +74,8 @@ void Protocol::initialize(std::string protocol, int num_cores, int cache_size,
             sn_caches.push_back(new Dragon(i));
         } else if(protocol == "CompSnooping") {
             sn_caches.push_back(new CompSnooping(i));
+        } else if(protocol == "MESIF") {
+            sn_caches.push_back(new MESIF(i));
         } else {
             assert(0);
         }
@@ -78,6 +87,8 @@ void Protocol::initialize(std::string protocol, int num_cores, int cache_size,
     Protocol::cache_evict = 0;
     Protocol::num_invalids = 0;
     Protocol::num_modified = 0;
+
+    Protocol::forward_evicted = false;
 }
 
 /**
@@ -98,4 +109,19 @@ void Protocol::process_mem_access(int thread_id, std::string op,
     ready = true;
     pthread_cond_broadcast(&worker_cv);
     pthread_mutex_unlock(&lock);
+
+    if(Protocol::forward_evicted) {
+        for(int i = 0; i < num_cores; i++) {
+
+            pthread_mutex_lock(&sn_caches[i]->lock);
+            if(sn_caches[i]->cache.cache_check_tag_status(Protocol::f_tag, Protocol::f_set) == Shared) {
+                sn_caches[i]->cache.cache_set_cache_tag_status(Protocol::f_tag, Protocol::f_set);
+                pthread_mutex_unlock(&sn_caches[i]->lock);
+                break;
+            }
+            pthread_mutex_unlock(&sn_caches[i]->lock);
+        }
+    }
 }
+
+
