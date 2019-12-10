@@ -72,6 +72,7 @@ void Protocol::initialize(std::string protocol, int num_cores, int cache_size,
         }
     }
 
+    /* Initialize metrics */
     Protocol::cache_miss = 0;
     Protocol::cache_hits = 0;
     Protocol::cache_evict = 0;

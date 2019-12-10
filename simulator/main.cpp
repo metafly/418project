@@ -49,6 +49,7 @@ void process_trace_file(std::string trace_filename) {
         local_count++;
     }
 
+    // Spin
     while(local_count != Protocol::trace_count);
 }
 

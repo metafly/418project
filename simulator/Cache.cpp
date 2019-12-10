@@ -43,9 +43,7 @@ Set::Set(unsigned long ass) {
 Cache::Cache() {
     unsigned long num_sets = cache_size / associativity;
 
-    // #######
     assert((num_sets & (num_sets - 1)) == 0);
-    // #######
 
     for(long i = 0; i < num_sets; i++) {
         sets.push_back(Set(associativity));
@@ -188,9 +186,9 @@ cache_state Cache::cache_check_status(unsigned long addr) {
         }
     }
 
-    if(status == Invalid)
+    if(status == Invalid)   // Cache miss
         Protocol::cache_miss++;
-    else
+    else                    // Cache hit
         Protocol::cache_hits++;
 
     return status;
