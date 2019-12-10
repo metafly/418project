@@ -36,6 +36,12 @@ std::atomic<long> Protocol::mem_write_backs;
 std::atomic<long> Protocol::cache_transfers;
 std::atomic<long> Protocol::trace_count;
 
+std::atomic<long> Protocol::cache_miss;
+std::atomic<long> Protocol::cache_hits;
+std::atomic<long> Protocol::cache_evict;
+std::atomic<long> Protocol::num_invalids;
+std::atomic<long> Protocol::num_modified;
+
 /**
  * Initialize the Protocol
  */
@@ -65,6 +71,12 @@ void Protocol::initialize(std::string protocol, int num_cores, int cache_size,
             assert(0);
         }
     }
+
+    Protocol::cache_miss = 0;
+    Protocol::cache_hits = 0;
+    Protocol::cache_evict = 0;
+    Protocol::num_invalids = 0;
+    Protocol::num_modified = 0;
 }
 
 /**

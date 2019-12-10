@@ -61,7 +61,13 @@ void print_mem_metrics(){
     std::cout << "\nBus Transactions = " << Protocol::bus_transactions;
     std::cout << "\nMemory Requests = " << Protocol::mem_reqs;
     std::cout << "\nMemory Write Backs = " << Protocol::mem_write_backs;
-    std::cout << "\nCache Transfers = " << Protocol::cache_transfers << "\n";
+    std::cout << "\nCache Transfers = " << Protocol::cache_transfers;
+    std::cout << "\nCache Misses = " <<Protocol::cache_miss;
+    std::cout << "\nCache Hits = " <<Protocol::cache_hits;
+    std::cout << "\nCache Evicts = " <<Protocol::cache_evict;
+    std::cout << "\nNumber of Invalidation Requests = " <<Protocol::num_invalids;
+    std::cout << "\nNumber of Modified state = " <<Protocol::num_modified;
+
 }
 
 int main(int argc, char *argv[]) {

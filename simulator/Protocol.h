@@ -35,6 +35,11 @@ public:
     static std::atomic <long> mem_write_backs;
     static std::atomic <long> cache_transfers;
     static std::atomic<long> trace_count;
+    static std::atomic<long>cache_miss;
+    static std::atomic<long>cache_hits;
+    static std::atomic<long>cache_evict;
+    static std::atomic<long>num_invalids;
+    static std::atomic<long>num_modified;
 
 private:
     static std::vector<SnoopingCache *> sn_caches;
