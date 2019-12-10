@@ -2,5 +2,5 @@ theme: jekyll-theme-cayman
 
 # Setup
 title: CacheM_ALL
-description: Cache Memory Access Load Latency Simulator: A 15-418 final project on directory-based cache coherence protocols.
+description: Cache Memory Access Load Latency Simulator, a 15-418 final project on directory-based cache coherence protocols.
 
