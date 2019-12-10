@@ -1,79 +1,123 @@
-#include "Memory.hpp"
-#include "Bus.hpp"
-#include "Directory.hpp"
+/**
+ * This file contains the implementation for the memory simulator
+ *
+ * Authors :-
+ * Kshitiz Dange <kdange@andrew.cmu.edu>
+ * Yash Tibrewal <ytibrewa@andrew.cmu.edu>
+ */
 
-#include <string>
 #include <iostream>
+#include "Memory.h"
+#include "Protocol.h"
 #include <unistd.h>
-#include <vector>
-#include <stdlib.h>
 
-#define DRAMSIZE 64000
+pthread_mutex_t Memory::lock;
+std::list<MemRequest *> Memory::req_table;
+pthread_cond_t Memory::threads_cv;
+pthread_cond_t Memory::req_cv;
 
-std::vector<MemRequest *> Memory::req_table;
-unsigned long Memory::low_add;
-unsigned long Memory::upp_add;
-Directory Memory::directory;
-int Memory::num_cores;
-std::string Memory::cache_protocol;
-ProtocolType Memory::protocol;
-MemRequest Memory::curr_request;
-bool Memory::valid_req;
+/**
+ * Adds latency to the memory operation
+ */
+//#pragma optimize( "", off )
+void dummy_instructions() {
 
-void Memory::mem_init(std::string processor, int cores, int procID, std::string cache_pcl) {
-    num_cores = cores;
+    usleep(2000); // 2 ms
+}
+//#pragma optimize( "", on )
 
-    if(processor.compare("UMA") == 0) {
-        low_add = 0;
-        upp_add = DRAMSIZE;
-    }
-    else if(processor.compare("NUMA") == 0) {
-        int size = DRAMSIZE/cores;
-        low_add = procID*size;
-        upp_add = low_add + size;
-    }
-    else if(processor.compare("HYBRID") == 0) {
-        if (procID < 4) {
-            low_add = 0;
-            upp_add = DRAMSIZE/2 - 1;
-        }
-        else {
-            low_add = DRAMSIZE/2;
-            upp_add = DRAMSIZE;
-        }
-    }
-
-    directory.init(cores);
-
-    if(cache_pcl.compare("MSI") == 0) {
-        protocol = ProtocolType::MSI;
-    }
-    else if(cache_pcl.compare("MESI") == 0) {
-        protocol = ProtocolType::MESI;
-    }
-    else if(cache_pcl.compare("MOSI") == 0) {
-        protocol = ProtocolType::MOSI;
-    }
-
-    valid_req = false;
-    curr_request(-1, -1, 0, -1);
-
+/**
+ * Constructor
+ */
+MemRequest::MemRequest(unsigned long a) {
+    addr = a;
+    pthread_cond_init(&cv, NULL);
+    done = false;
+    waiters = 0;
 }
 
-int Memory::mem_cycle() {
-    operations bus_status = Bus::status();
+/**
+ * Initializes the memory worker and the synchronization primitives
+ */
+void Memory::initialize() {
+    pthread_mutex_init(&lock, NULL);
+    pthread_cond_init(&threads_cv, NULL);
+    pthread_cond_init(&req_cv, NULL);
 
-    if (bus_status == operations::UNACT) {
-        if(valid_req == false) {
-            return 1;
-        }
-
-        int acquire = Bus:;acquire(
-
-
-
-
-    return 1;
+    pthread_t tid;
+    pthread_create(&tid, NULL, memory_worker, NULL);
 }
 
+/**
+ * The worker function for the memory thread
+ */
+void *Memory::memory_worker(void *arg) {
+    pthread_mutex_lock(&lock);
+    while(true) {
+        /* Wait while request table is empty */
+        while(req_table.empty()) {
+            pthread_cond_wait(&req_cv, &lock);
+        }
+        Protocol::mem_reqs++;
+        pthread_mutex_unlock(&lock);
 
+        // wait logic - adds latency
+        dummy_instructions();
+
+        pthread_mutex_lock(&lock);
+        MemRequest *req = req_table.front();
+        req->done = true;
+        /* Multiple caches might be waiting on this */
+        pthread_cond_broadcast(&req->cv);
+        req_table.pop_front();
+    }
+
+    /* Never exits */
+    pthread_mutex_unlock(&lock);
+    return NULL;
+}
+
+/**
+ * This function is called by the cache workers to request a cacheline from
+ * memory
+ */
+void Memory::request(unsigned long addr) {
+    pthread_mutex_lock(&lock);
+
+    /* Check if request already exists in table */
+    for(MemRequest *req: req_table) {
+        if(req->addr == addr) {
+            req->waiters++;
+            while(!req->done) {
+                pthread_cond_wait(&req->cv, &lock);
+            }
+            req->waiters--;
+            /* The original requester can be woken up if there are no more
+             * workers
+             */
+            if(req->waiters == 0) {
+                pthread_cond_signal(&req->cv);
+            }
+            pthread_mutex_unlock(&lock);
+            return;
+        }
+    }
+
+    MemRequest req(addr);
+
+    /* Insert request in table */
+    req_table.push_back(&req);
+
+    /* Signal memory worker if request table was empty */
+    if(req_table.size() == 1) {
+        pthread_cond_signal(&req_cv);
+    }
+
+    /* Original thread waits till request is done and while there are no more
+     * additional waiters
+     */
+    while(!req.done || req.waiters != 0) {
+        pthread_cond_wait(&req.cv, &lock);
+    }
+    pthread_mutex_unlock(&lock);
+}

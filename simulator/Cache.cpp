@@ -1,12 +1,17 @@
 /**
  * Cache implementation for the processor.
+ *
+ * Authors:
+ *     Kshitiz Dange (KDANGE)
+ *     Yash Tibrewal (YTIBREWA)
  */
 
 #include <vector>
 #include <math.h>
 #include <assert.h>
 #include <limits.h>
-#include "Cache.hpp"
+#include "Cache.h"
+#include "Protocol.h"
 
 #define CACHE_LINE_SIZE (1 << (BLOCK_BITS))
 #define CLINE_CTR_THRESH 3
@@ -134,7 +139,7 @@ void Cache::insert_cache(unsigned long addr, cache_state status) {
     if(!found_line) {
         // Do LRU now
 
-		//  TODO: write back to memory
+        Protocol::mem_write_backs++;
         CacheLine &evict = s.cl[0];
         unsigned long low = s.cl[0].lru_num;
         for(CacheLine &c : s.cl) {
@@ -156,7 +161,7 @@ void Cache::insert_cache(unsigned long addr, cache_state status) {
         /* On eviction check if status indicates modification */
         if(evict.status == Modified || evict.status == Owner ||
            evict.status == ShModified) {
-			//  TODO: write back to memory
+            Protocol::mem_write_backs++;
         }
     }
 

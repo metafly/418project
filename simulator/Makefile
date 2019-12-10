@@ -1,15 +1,13 @@
 CXX=g++
-CXXFLAGS= -std=c++11 -g -pthread
-SRCDIR:= simulator
+CPPFLAGS=-std=c++11 -g -pthread
+OBJS=Memory.o Bus.o Cache.o MSI.o MOSI.o MESI.o MOESI.o CompSnooping.o Dragon.o Protocol.o main.o
+# This line complies the code and creates the binary
 
-OBJS = Directory.o Bus.o UMA.o main.o
+%o: %.cpp
+	$(CXX) -c $< $(CPPFLAGS)
 
-%.o: %.cpp
-	$(CXX) -c $< $(CXXFLAGS)
-
-cachemall: $(OBJS)
-	$(CXX) $(OBJS) -o $@ $(CXXFLAGS)
+cache_sim: $(OBJS)
+	$(CXX) $(OBJS) -o $@ $(CPPFLAGS)
 
 clean:
-	/bin/rm -rf cachemall
-	/bin/rm -f *.o
+	rm -f *.o run_cacheSim

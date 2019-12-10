@@ -1,58 +1,71 @@
-#include "Bus.hpp"
+/**
+ * Bus implementation for the system.
+ *
+ * Authors:
+ *     Kshitiz Dange (KDANGE)
+ *     Yash Tibrewal (YTIBREWA)
+ */
 
+#include "Bus.h"
+#include "Protocol.h"
 #include <iostream>
-#include <stdlib.h>
 
-#define WAITTIME 4
-
-pthread_mutex_t Bus::reqresp_lock;
-pthread_cond_t Bus::reqresp_cvar;
-
-int Bus::reqresp_count;
+pthread_mutex_t Bus::req_lock;
+pthread_mutex_t Bus::resp_lock;
+pthread_cond_t  Bus::req_cvar;
+pthread_cond_t  Bus::resp_cvar;
+int Bus::resp_count;
 int Bus::owner_id;
-int Bus::cores;
-
-MemRequest Bus::request;
-long Bus::acq_time;
-long Bus::act_time; //amount of time bus was active
-int Bus::wait;
+unsigned long Bus::addr;
+std::vector<bool> Bus::pending_work;
+bool Bus::recv_nak;
+bool Bus::read_ex;
 
 operations Bus::opt;
 
+/**
+ * Initializes the state that we need to maintain for bus instance.
+ */
 void Bus::init(int num_cores) {
-    std::cout<<"Initializing Bus...";
 
-    pthread_mutex_init(&reqresp_lock, NULL);
-    pthread_cond_init(&reqresp_cvar, NULL);
-    reqresp_count = 0;
+    pthread_mutex_init(&req_lock, NULL);
+    pthread_mutex_init(&resp_lock, NULL);
+    pthread_cond_init(&req_cvar, NULL);
+    pthread_cond_init(&resp_cvar, NULL);
+    resp_count = 0;
     owner_id = 0;
-     = 0;
-    opt = UNACT;
-    cores = num_cores;
-    acq_time = -1;
-    wait = WAITTIME;
-    act_time = 0;
+    addr = 0;
+    opt = BusRdX;
+    recv_nak = false;
+    read_ex = true;
 
-    std::cout<<"done!\n";
+    pending_work = std::vector<bool>(num_cores, false);
 }
 
-/* return 0 when not acquired */
-int Bus::acquire(int id, unsigned long address, operations oper) {
-    pthread_mutex_lock(&reqresp_lock);
-    if (acq_time != -1) {
-        pthread_mutex_unlock(&reqresp_lock);
-        return 0;
-    }
+/**
+ * Waits for responses on the bus
+ */
+void Bus::wait_for_responses(int id, unsigned long address, operations oper) {
+
+    pthread_mutex_lock(&resp_lock);
     addr = address;
     opt = oper;
-    wait = WAITTIME;
-    reqresp_count++;
-    owner_id = id;
+    recv_nak = false;
+    read_ex = true;
+    resp_count = 0;
+    owner_id = -1;
 
-    pthread_mutex_unlock(&reqresp_lock);
-    return 1;
-}
+    for(int i = 0; i < Protocol::num_cores; i++) {
+        if(id == i) {
+            continue;
+        }
+        pending_work[i] = true;
+    }
+    pthread_cond_broadcast(&resp_cvar);
 
-operations Bus::status() {
-    return opt;
+    while(resp_count != Protocol::num_cores - 1) {
+        pthread_cond_wait(&req_cvar, &resp_lock);
+    }
+
+    pthread_mutex_unlock(&resp_lock);
 }
