@@ -15,7 +15,7 @@
 #include "Bus.h"
 
 class SnoopingCache {
-protected:
+public:
     Cache cache;
     pthread_t req_thread;
     pthread_t resp_thread;

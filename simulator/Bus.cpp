@@ -4,6 +4,10 @@
  * Authors:
  *     Kshitiz Dange (KDANGE)
  *     Yash Tibrewal (YTIBREWA)
+ *
+ *  Documented by:
+ *    Claudia Kho
+ *    Shivani Prasad
  */
 
 #include "Bus.h"

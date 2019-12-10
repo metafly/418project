@@ -4,6 +4,11 @@
  * Authors:
  *     Kshitiz Dange (KDANGE)
  *     Yash Tibrewal (YTIBREWA)
+ *     Shivani Prasad (sprasad1)
+ *
+ *  Documented by:
+ *      Shivani Prasad
+ *      Claudia Kho
  */
 
 #include <vector>
@@ -153,18 +158,25 @@ void Cache::insert_cache(unsigned long addr, cache_state status) {
         // Update the lru for set
         s.current_lru++;
 
-        // Write to new cache line
-        evict.tag = tag;
-        evict.status = status;
-        evict.lru_num = s.current_lru;
-        evict.counter =  CLINE_CTR_THRESH;
-
         /* On eviction check if status indicates modification */
         /* Only calculate memory write backs when the data has been modified*/
         if(evict.status == Modified || evict.status == Owner ||
            evict.status == ShModified) {
             Protocol::mem_write_backs++;
         }
+        if(evict.status == Forward) {
+            Protocol::forward_evicted = true;
+            Protocol::f_tag = evict.tag;
+            Protocol::f_set = set;
+        }
+
+        // Write to new cache line
+        evict.tag = tag;
+        evict.status = status;
+        evict.lru_num = s.current_lru;
+        evict.counter =  CLINE_CTR_THRESH;
+
+
     }
 
 }
@@ -195,6 +207,39 @@ cache_state Cache::cache_check_status(unsigned long addr) {
 
     return status;
 }
+
+cache_state Cache::cache_check_tag_status(unsigned long tag, unsigned long set) {
+    Set &s = sets[set];
+    cache_state status = Invalid;
+
+    for(CacheLine &c: s.cl) {
+        if(c.tag == tag) {
+            status = c.status;
+            break;
+        }
+    }
+
+    if(status == Invalid)
+        Protocol::cache_miss++;
+    else
+        Protocol::cache_hits++;
+
+    return status;
+}
+
+void Cache::cache_set_cache_tag_status(unsigned long tag, unsigned long set) {
+    Set &s = sets[set];
+    for(CacheLine &c: s.cl) {
+        if(c.tag == tag) {
+            assert(c.status == Shared);
+            c.status = Forward;
+            break;
+        }
+    }
+}
+
+
+
 
 /**
  * This function sets the status associated with the address in the cache line.

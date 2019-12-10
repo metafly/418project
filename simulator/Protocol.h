@@ -5,6 +5,7 @@
  * Authors :-
  * Kshitiz Dange <kdange@andrew.cmu.edu>
  * Yash Tibrewal <ytibrewa@andrew.cmu.edu>
+ * Shivani Prasad <sprasad1>
  */
 
 #include <string>
@@ -27,6 +28,9 @@ public:
     static unsigned long request_addr; /* The address for the operation */
     static int num_cores;
 
+    static bool forward_evicted;
+    static unsigned long f_tag;
+    static unsigned long f_set;
     /*
      * The metrics for comparison
      */

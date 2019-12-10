@@ -24,6 +24,7 @@ enum cache_state {
     Invalid,
     Exclusive,
     Owner,
+    Forward,
     ShModified,
     ShClean
 };
@@ -73,10 +74,12 @@ class Cache
 
         Cache();
 
+        cache_state cache_check_tag_status(unsigned long tag, unsigned long set);
         void update_cache_lru(unsigned long addr);
         void insert_cache(unsigned long addr, cache_state status);
         cache_state cache_check_status(unsigned long addr);
         void cache_set_status(unsigned long addr, cache_state status);
+        void cache_set_cache_tag_status(unsigned long tag, unsigned long set);
 
         unsigned long cache_get_counter(unsigned long addr);
         void cache_incr_counter(unsigned long addr);
