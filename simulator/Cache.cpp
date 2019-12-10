@@ -137,9 +137,10 @@ void Cache::insert_cache(unsigned long addr, cache_state status) {
     }
 
     if(!found_line) {
-        // Do LRU now
+        // Do LRU nowi
 
-        Protocol::mem_write_backs++;
+        /*metric incremented as cache line will be evicted*/
+        Protocol::cache_evict++;
         CacheLine &evict = s.cl[0];
         unsigned long low = s.cl[0].lru_num;
         for(CacheLine &c : s.cl) {
@@ -159,6 +160,7 @@ void Cache::insert_cache(unsigned long addr, cache_state status) {
         evict.counter =  CLINE_CTR_THRESH;
 
         /* On eviction check if status indicates modification */
+        /* Only calculate memory write backs when the data has been modified*/
         if(evict.status == Modified || evict.status == Owner ||
            evict.status == ShModified) {
             Protocol::mem_write_backs++;
