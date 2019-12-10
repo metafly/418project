@@ -4,5 +4,3 @@ theme: jekyll-theme-cayman
 title: CacheM_ALL
 description: Cache Memory Access Load Latency Simulator: A 15-418 final project on directory-based cache coherence protocols.
 
-author: Shivani Prasad
-author: Claudia Kho
